@@ -9,6 +9,10 @@ const {
     Image
 } = require('./image')
 
+const {
+    Video
+} = require('./video')
+
 var fs = require('fs');
 
 const {
@@ -64,12 +68,35 @@ app.post('/upload', (req, res) => {
 
 });
 
+app.post('/uploadVideo', (req, res) => {
+
+    var video = new Video({
+        link: req.body.videoLink,
+        title: req.body.videoTitle,
+        description: req.body.videoDescription
+    });
+
+    video.save().then(() => {
+        console.log('Added to db')
+    }).catch((e) => {
+        console.log('db failed', e);
+    });
+
+    res.redirect('/');
+
+});
+
 app.get('/images', (req, res) => {
     Image.find({}).then((images) => {
         res.send(images);
     });
 });
 
+app.get('/videos', (req, res) => {
+    Video.find({}).then((videos) => {
+        res.send(videos);
+    });
+});
 
 
 var port = process.env.PORT || 3000
