@@ -1,34 +1,19 @@
 <html>
 
 <head>
+    <link rel="stylesheet" href="./style/style.css">
     <style>
-        img {
+        a {
+            font-size: 30px;
             display: block;
-            max-width: 500px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 
 <body>
-    <h2>Upload Image</h2>
-    <form ref='uploadForm' id='uploadForm' action='/upload' method='post' encType="multipart/form-data">
-        <input type="file" name="userFile" />
-        <input type="text" name="title" placeholder="title">
-        <input type="text" name="description" placeholder="Description">
-        <input type='submit' value='Upload!' />
-    </form>
-
-
-    <h2>Upload Video</h2>
-    <form ref='uploadFormVideo' id='uploadFormVideo' action='/uploadVideo' method='post'>
-        <input type="text" name="videoLink" placeholder="Youtube Link">
-        <input type="text" name="videoTitle" placeholder="title">
-        <input type="text" name="videoDescription" placeholder="Description">
-        <input type='submit' value='Upload!' />
-    </form>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="script.js"></script>
-
+    <a href="/imageUpload">Upload Image</a>
+    <a href="/videoUpload">Upload Video</a>
 </body>
 
 </html>

@@ -50,7 +50,7 @@ app.post('/upload', (req, res) => {
     }).single('userFile');
     upload(req, res, function (err) {
         console.log(req.body);
-        res.redirect('/');
+        res.redirect('/imageUpload');
 
         var image = new Image({
             name: req.file.filename,
@@ -82,8 +82,16 @@ app.post('/uploadVideo', (req, res) => {
         console.log('db failed', e);
     });
 
-    res.redirect('/');
+    res.redirect('/videoUpload');
 
+});
+
+app.get('/imageUpload', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/uploadImage.html'));
+});
+
+app.get('/videoUpload', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/uploadVideo.html'));
 });
 
 app.get('/images', (req, res) => {
