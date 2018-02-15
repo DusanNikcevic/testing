@@ -1,7 +1,10 @@
-var express = require("express")
-var multer = require('multer')
-var app = express()
-var path = require('path')
+var express = require("express");
+var multer = require('multer');
+var app = express();
+var path = require('path');
+const {
+    ObjectID
+} = require('mongodb');
 
 const bodyParser = require('body-parser');
 
@@ -35,7 +38,11 @@ var storage = multer.diskStorage({
     filename: function (req, file, callback) {
         callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
-})
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/index.html'));
+});
 
 app.post('/upload', (req, res) => {
     var upload = multer({
@@ -49,7 +56,6 @@ app.post('/upload', (req, res) => {
         }
     }).single('userFile');
     upload(req, res, function (err) {
-        console.log(req.body);
         res.redirect('/imageUpload');
 
         var image = new Image({
@@ -106,8 +112,38 @@ app.get('/videos', (req, res) => {
     });
 });
 
+app.delete('/delete-video/:id', (req, res) => {
+    var id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send('id not valid');
+    }
+    Video.findByIdAndRemove(id).then((video) => {
+        if (!video) {
+            return res.status(404).send();
+        }
+        res.redirect('/videoUpload');
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
+app.delete('/delete-image/:id', (req, res) => {
+    var id = req.params.id;
+    if (!ObjectID.isValid(id)) {
+        return res.status(404).send('id not valid');
+    }
+    Image.findByIdAndRemove(id).then((image) => {
+        if (!video) {
+            return res.status(404).send();
+        }
+        res.redirect('/imageUpload');
+    }).catch((e) => {
+        res.status(400).send();
+    });
+});
+
 
 var port = process.env.PORT || 3000
 app.listen(port, function () {
     console.log('Node.js listening on port ' + port)
-})
+});
