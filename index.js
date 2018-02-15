@@ -13,7 +13,7 @@ const {
     mongoose
 } = require('./mongoose');
 
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 const publicPath = path.join(__dirname, './public');
 app.use(express.static(publicPath));
@@ -36,7 +36,7 @@ app.post('/upload', function (req, res) {
 
     // Use the mv() method to place the file somewhere on your server
     var name = req.files.sampleFile.name;
-    var location = path.join(__dirname + `./../images/${name}`);
+    var location = path.join(__dirname + `/images/${name}`);
     sampleFile.mv(location, function (err) {
         if (err) {
             return res.status(500).send(err);
