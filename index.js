@@ -1,69 +1,68 @@
-const express = require('express');
-const path = require('path');
-const fileUpload = require('express-fileupload');
-const app = express();
-
-const fs = require('fs');
-
+var express = require("express")
+var multer = require('multer')
+var app = express()
+var path = require('path')
 const {
     Image
-} = require('./image');
+} = require('./image')
+
+var fs = require('fs');
 
 const {
-    mongoose
+    mongoouse
 } = require('./mongoose');
-
-const port = process.env.PORT || 3000;
 
 const publicPath = path.join(__dirname, './public');
 app.use(express.static(publicPath));
 
-// default options
-app.use(fileUpload({
-    safeFileNames: true,
-    preserveExtension: true
-}));
+
+var storage = multer.diskStorage({
+    destination: function (req, file, callback) {
+        callback(null, './public/images')
+    },
+    filename: function (req, file, callback) {
+        callback(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    }
+})
 
 app.post('/upload', function (req, res) {
-
-    console.log();
-    if (!req.files)
-        return res.status(400).send('No files were uploaded.');
-
-    // The name of the input field (i.e. "sampleFile") is used to retrieve the uploaded file
-    let sampleFile = req.files.sampleFile;
-
-
-    // Use the mv() method to place the file somewhere on your server
-    var name = req.files.sampleFile.name;
-    var location = path.join(__dirname + `/images/`);
-    sampleFile.mv(location, function (err) {
-        if (err) {
-            return res.status(500).send(err);
+    var upload = multer({
+        storage: storage,
+        fileFilter: function (req, file, callback) {
+            var ext = path.extname(file.originalname)
+            if (ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+                return callback(res.end('Only images are allowed'), null)
+            }
+            callback(null, true)
         }
+    }).single('userFile');
+    upload(req, res, function (err) {
+        // console.log(req.file);
+        res.redirect('/')
+
         var image = new Image({
-            name,
-            location
-        });
+            name: req.file.filename,
+            location: req.file.path
+        })
 
-        image.save().then(function () {
-            console.log('image saved')
+        image.save().then(() => {
+            console.log('Added to db')
         }).catch((e) => {
-            console.log('image not saved', e);
+            console.log('db failed', e);
         });
-
-        res.send('File uploaded!' + `<img src="${location}"></img>`);
     });
-
 
 });
 
-app.get('/images', function (req, res) {
+app.get('/images', (req, res) => {
     Image.find({}).then((images) => {
         res.send(images);
     });
 });
 
-app.listen(port, () => {
-    console.log('Server started at port 3000')
-});
+
+
+var port = process.env.PORT || 3000
+app.listen(port, function () {
+    console.log('Node.js listening on port ' + port)
+})
