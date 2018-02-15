@@ -2,6 +2,9 @@ var express = require("express")
 var multer = require('multer')
 var app = express()
 var path = require('path')
+
+const bodyParser = require('body-parser');
+
 const {
     Image
 } = require('./image')
@@ -14,6 +17,10 @@ const {
 
 const publicPath = path.join(__dirname, './public');
 app.use(express.static(publicPath));
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
 
 
 var storage = multer.diskStorage({
@@ -25,7 +32,7 @@ var storage = multer.diskStorage({
     }
 })
 
-app.post('/upload', function (req, res) {
+app.post('/upload', (req, res) => {
     var upload = multer({
         storage: storage,
         fileFilter: function (req, file, callback) {
@@ -37,13 +44,15 @@ app.post('/upload', function (req, res) {
         }
     }).single('userFile');
     upload(req, res, function (err) {
-        // console.log(req.file);
-        res.redirect('/')
+        console.log(req.body);
+        res.redirect('/');
 
         var image = new Image({
             name: req.file.filename,
-            location: req.file.path
-        })
+            location: req.file.path,
+            title: req.body.title,
+            description: req.body.description
+        });
 
         image.save().then(() => {
             console.log('Added to db')
