@@ -1,0 +1,29 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="./style/style.css">
+    <style>
+        a {
+            font-size: 30px;
+            display: block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Uspjesno logovanje</h2>
+</body>
+
+<script>
+    function login() {
+        $.ajax({
+            url: '/login',
+            type: 'POST'
+        }).done(function () {
+            console.log('kurac');
+        });
+    }
+</script>
+
+</html>

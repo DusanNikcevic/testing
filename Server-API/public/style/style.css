@@ -1,0 +1,13 @@
+body {
+    text-align: center;
+}
+
+img {
+    max-width: 800px;
+}
+
+#uploadForm input,
+#uploadForm textarea {
+    display: block;
+    margin: 1rem auto;
+}
